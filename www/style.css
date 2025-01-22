@@ -22,8 +22,8 @@ body{
     box-shadow: 0 0 50px rgb(25, 0, 255), inset 0 0 50px rgb(25, 0, 255);
     border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
     transition: 0.5s;
-    animation: animate1 6s linear infinite;
-}
+    animation: extraordinaryAnimation 6s linear infinite;
+  }
 
 .square span:nth-child(2){
     position: absolute;
@@ -83,7 +83,7 @@ body{
 
 #TextInput {
     background-color: #181818a8;
-    border-color: blue;
+    border: 2px solid blue; /* Created border */
     box-shadow: 0 0 20px rgb(25, 0, 255),
       inset 0 0 0px rgb(25, 0, 255);
     border-radius: 8px;
@@ -100,7 +100,6 @@ body{
     color: white;
     font-family: cursive;
   }
-
 
   .glow-on-hover {
     width: 35px;
@@ -171,6 +170,5 @@ body{
       background-position: 0 0;
     }
   }
-
 
   /* Input Filed End*/

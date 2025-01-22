@@ -7,5 +7,4 @@ from engine.features import *
 
 playAssistantSound()
 
-
 eel.start('index.html', mode='edge', block=True)

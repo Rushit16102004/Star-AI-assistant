@@ -20,7 +20,7 @@ $(document).ready(function () {
     amplitude: "1",
     speed: "0.30",
     autostart: true
-  });
+});
 
     // Siri message animation
     if ($('.siri-message').length) { // Check if the element exists
@@ -36,8 +36,18 @@ $(document).ready(function () {
                 sync: true,
             },
         });
-    } else {
+    }
+    else {
         console.warn("Element .siri-message not found.");
     }
+
+//mic button click event
+
+    $("#MicBtn").click(function () { 
+        eel.playAssistantSound()
+        $("#Oval").attr("hidden", true);
+        $("#SiriWave").attr("hidden", false);
+
+    });
 
 });
