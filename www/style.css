@@ -172,3 +172,39 @@ body{
   }
 
   /* Input Filed End*/
+
+  /* responsive */
+
+  @media (max-width: 768px) {
+    .square {
+        width: 90%;
+        height: auto;
+    }
+
+    #TextInput {
+      margin: 0px 2%;
+      padding: 2px 0px 2px 8px;
+      width: 90%;
+    }
+
+    .glow-on-hover {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .square {
+        width: 100%;
+    }
+
+    #TextInput {
+      padding: 2px 0px 2px 4px;
+      width: 95%;
+    }
+
+    .glow-on-hover {
+        width: 24px;
+        height: 24px;
+    }
+}
