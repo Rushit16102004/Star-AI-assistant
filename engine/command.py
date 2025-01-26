@@ -1,3 +1,6 @@
+from token import STAR
+from turtledemo.penrose import star
+
 import pyttsx3
 import speech_recognition as sr
 import eel
@@ -36,23 +39,23 @@ def takecommand():
     return query.lower()
 
 @eel.expose
-
 def allCommands():
 
     query = takecommand()
     print(query)
-
-    if "open" in query:
+    if "start" in query:
+        from engine.features import startCommandApp
+        startCommandApp(query)
+    elif "open" in query:
         from engine.features import openCommand
         openCommand(query)
-    elif "on youtube":
+    elif "on youtube" in query:
         from engine.features import PlayYoutube
         PlayYoutube(query)
     else:
         print("not run")
 
     eel.ShowHood()
-
 # def takecommand():
 #     r = sr.Recognizer()
 
