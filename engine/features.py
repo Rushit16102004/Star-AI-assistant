@@ -1,16 +1,26 @@
 import os
 import re
+import sqlite3
+import struct
+import webbrowser
+from datetime import time
 
+import pvporcupine
+import pyaudio
 import pywhatkit as kit
 import pygame
 import eel
 
 from engine.command import speak
 from engine.config import ASSISTANT_NAME
+from engine.helper import extract_yt_term
 
+con = sqlite3.connect("star.db")
+cursor = con.cursor()
 
 # Initialize pygame mixer module
 pygame.mixer.init()
+
 
 # Playing assistant sound function
 @eel.expose
@@ -21,60 +31,88 @@ def playAssistantSound():
     while pygame.mixer.music.get_busy():
         pygame.time.Clock().tick(10)
 
-def openCommand(query):
-    query = query.replace(ASSISTANT_NAME, "")
-    query = query.replace("open", "")
-    query.lower()
 
-    if query!="":
-        speak("opening "+query)
-        os.system('start '+query)
-    else:
-        speak("not found")
+def hotword():
+    porcupine = None
+    paud = None
+    audio_stream = None
+    try:
+        # pre-trained keywords
+        porcupine = pvporcupine.create(keywords=["star", "alexa"])  # Updated keyword
+        paud = pyaudio.PyAudio()
+        audio_stream = paud.open(rate=porcupine.sample_rate, channels=1, format=pyaudio.paInt16, input=True,
+                                frames_per_buffer=porcupine.frame_length)
 
+        # loop for streaming
+        while True:
+            keyword = audio_stream.read(porcupine.frame_length)
+            keyword = struct.unpack_from("h" * porcupine.frame_length, keyword)
 
-def find_app_in_database(app_name):
-    import sqlite3
+            # processing keyword comes from mic
+            keyword_index = porcupine.process(keyword)
 
-    conn = sqlite3.connect('star.db')
-    cursor = conn.cursor()
+            # checking first keyword detected
+            if keyword_index >= 0:
+                print("hotword detected")
 
-    cursor.execute("SELECT path FROM applications WHERE name=?", (app_name,))
-    result = cursor.fetchone()
+            # pressing shortcut key win+j
+            import pyautogui as autogui  # type: ignore
+            autogui.keyDown("shift")
+            autogui.press("s")
+            time.sleep(2)
+            autogui.keyUp("shift")
 
-    conn.close()
-
-    return result[0] if result else None
-
-
-def extract_app_name(query):
-    pattern = r'(?:open|start)\s+(.+)'
-    match = re.search(pattern, query, re.IGNORECASE)
-    return match.group(1).strip() if match else None
-
-
-def startCommandApp(query):
-    app_name = extract_app_name(query)
-
-    if app_name:
-        app_path = find_app_in_database(app_name)
-        if app_path:
-            speak("opening " + app_name)
-            os.system('start ' + app_path)
-        else:
-            speak("application not found in database")
-    else:
-        speak("not found")
+    except Exception as e:
+        print(f"Error: {e}")  # Log the error
+        if porcupine is not None:
+            porcupine.delete()
+        if audio_stream is not None:
+            audio_stream.close()
+        if paud is not None:
+            paud.terminate()
 
 
+def hotword():
+    porcupine = None
+    paud = None
+    audio_stream = None
+    try:
+
+        # pre-trained keywords
+        porcupine = pvporcupine.create(keywords=["jarvis", "alexa"])
+        paud = pyaudio.PyAudio()
+        audio_stream = paud.open(rate=porcupine.sample_rate, channels=1, format=pyaudio.paInt16, input=True,
+                                frames_per_buffer=porcupine.frame_length)
+
+        # loop for streaming
+        while True:
+            keyword = audio_stream.read(porcupine.frame_length)
+            keyword = struct.unpack_from("h" * porcupine.frame_length, keyword)
+
+            # processing keyword comes from mic
+            keyword_index = porcupine.process(keyword)
+
+            # checking first keyword detetcted for not
+            if keyword_index >= 0:
+                print("hotword detected")
+
+            # pressing shorcut key win+j
+            import pyautogui as autogui  # type: ignore
+            autogui.keyDown("shift")
+            autogui.press("s")
+            time.sleep(2)
+            autogui.keyUp("shift")
+
+    except:
+        if porcupine is not None:
+            porcupine.delete()
+        if audio_stream is not None:
+            audio_stream.close()
+        if paud is not None:
+            paud.terminate()
 
 
 def PlayYoutube(query):
     search_term = extract_yt_term(query)
-    speak("Playing "+search_term+" on YouTube")
+    speak("Playing " + search_term + " on YouTube")
     kit.playonyt(search_term)
-
-def extract_yt_term(command):
-    pattern = r'play\s+(.*?)\s+on\s+youtube'
-    match = re.search(pattern, command, re.IGNORECASE)
-    return match.group(1) if match else None

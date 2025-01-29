@@ -4,79 +4,43 @@ body{
     overflow-x: hidden;
 }
 .square{
-    position: relative;
-    width: 400px;
-    height: 400px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: relative;
+  width: 400px; /* Adjusted for star shape */
+  height: 400px; /* Adjusted for star shape */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); /* Star shape */
+  animation: expensive 2s infinite; /* Changed animation to defrunt */
 }
 
-.square span:nth-child(1){
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: radial-gradient(#6b72ff00 50%, #000dff3b 40%);
-    box-shadow: 0 0 50px rgb(25, 0, 255), inset 0 0 50px rgb(25, 0, 255);
-    border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
-    transition: 0.5s;
-    animation: extraordinaryAnimation 6s linear infinite;
+/* Updated spans for star effect */
+.square span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(#6b72ff00 50%, #000dff3b 40%);
+  box-shadow: 0 0 50px rgb(25, 0, 255), inset 0 0 50px rgb(25, 0, 255);
+  border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+  transition: 0.5s;
+}
+
+
+/* Added keyframes for defrunt animation */
+@keyframes expensive {
+  0% {
+      transform: scale(1);
   }
-
-.square span:nth-child(2){
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: radial-gradient(#6b72ff00 50%, #000dff3b 40%);
-    box-shadow: 0 0 50px rgb(25, 0, 255), inset 0 0 50px rgb(25, 0, 255);
-    border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
-    transition: 0.5s;
-    animation: animate2 4s linear infinite;
+  50% {
+      transform: scale(1.2);
+  }
+  100% {
+      transform: scale(1);
+  }
 }
 
-.square span:nth-child(3){
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: radial-gradient(#6b72ff00 50%, #000dff3b 40%);
-    box-shadow: 0 0 50px rgb(25, 0, 255), inset 0 0 50px rgb(25, 0, 255);
-    border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
-    transition: 0.5s;
-    animation: animate3 8s linear infinite;
-}
-
-@keyframes animate1{
-    0% {
-        transform: rotate(0deg);
-    }
-    100%{
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes animate2{
-    0% {
-        transform: rotate(0deg);
-    }
-    100%{
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes animate3{
-    0% {
-        transform: rotate(0deg);
-    }
-    100%{
-        transform: rotate(360deg);
-    }
-}
 
 
 /* Input Filed Start*/

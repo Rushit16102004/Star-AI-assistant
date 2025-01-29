@@ -3,8 +3,9 @@ import eel
 
 from engine.features import *
 from engine.command import *
-(eel.init("www"))
 
-playAssistantSound()
+def start():
+    (eel.init("www"))
 
-eel.start('index.html', mode='edge', block=True)
+    playAssistantSound()
+    eel.start('index.html', mode='edge', block=True)
