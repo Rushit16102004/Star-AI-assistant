@@ -1,6 +1,5 @@
 from token import STAR
 from turtledemo.penrose import star
-
 import pyttsx3
 import speech_recognition as sr
 import eel
@@ -50,13 +49,35 @@ def allCommands():
         elif "on youtube" in query:
             from engine.features import PlayYoutube
             PlayYoutube(query)
+        elif "send message" in query or "phone call" in query or "call" in query or "video call" in query:
+            from engine.features import findContact, whatsApp
+            flag = ""
+            contact_no, name = findContact(query)
+            if (contact_no != 0):
+
+                if "send message" in query:
+                    flag = 'message'
+                    speak("what message to send")
+                    query = takecommand()
+
+                elif "phone call" in query:
+                    flag = 'call'
+
+                elif "call" in query:
+                    flag = 'call'
+
+                else:
+                    flag = 'video call'
+
+                whatsApp(contact_no, query, flag, name)
         else:
             print("not run")
-    except:
-        print("error")
-
+    except Exception as e:
+        print(f"error: {e}")
 
     eel.ShowHood()
+
+
 # def takecommand():
 #     r = sr.Recognizer()Voice command.
 
