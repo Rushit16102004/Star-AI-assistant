@@ -9,13 +9,13 @@ def startStar():
     from main import start
     start()
 
-
 # To run hotword
 def listenHotword():
     # Code for process 2
     print("Process 2 is running.")
     from engine.features import hotword
     hotword()
+
 
 # Start both processes
 if __name__ == '__main__':
@@ -29,4 +29,4 @@ if __name__ == '__main__':
         p2.terminate()
         p2.join()
 
-    print("system stop")
+        print("system stop") 

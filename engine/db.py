@@ -81,13 +81,6 @@ desired_columns_indices = [0, 1]  # Update indices to match first name and last 
 
 # Insert Single contacts (Optional)
 
-# query = "INSERT INTO contacts VALUES (null,'pawan', '1234567890', 'null')"
-# cursor.execute(query)
-# con.commit()
-
-query = 'rushit'
-query = query.strip().lower()
-
-cursor.execute("SELECT mobile_no FROM contacts WHERE LOWER(name) LIKE ? OR LOWER(name) LIKE ?", ('%' + query + '%', query + '%'))
-results = cursor.fetchall()
-print(results[0][0])
+query = "INSERT INTO contacts VALUES (null,'sushi', '9574491009', 'null')"
+cursor.execute(query)
+con.commit()

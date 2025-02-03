@@ -38,7 +38,8 @@ def takecommand():
     return query.lower()
 
 @eel.expose
-def allCommands():
+def allCommands(message=1):
+    
 
     try:
         query = takecommand()

@@ -2,43 +2,37 @@ import struct
 from datetime import time
 import speech_recognition as sr  # New library for speech recognition
 import pyaudio
+import pyautogui
 
-porcupine = None
-paud = None
-audio_stream = None
-recognizer = sr.Recognizer()  # Initialize the recognizer
-
+porcupine=None
+paud=None
+audio_stream=None
 try:
-    paud = pyaudio.PyAudio()
-    audio_stream = paud.open(rate=16000, channels=1, format=pyaudio.paInt16, input=True,
-                        frames_per_buffer=1024)
+    
+        # pre trained keywords    
+    porcupine=pvporcupine.create(keywords=["jarvis","alexa"]) 
+    paud=pyaudio.PyAudio()
+    audio_stream=paud.open(rate=porcupine.sample_rate,channels=1,format=pyaudio.paInt16,input=True,frames_per_buffer=porcupine.frame_length)
+        
+        # loop for streaming
+    while True:
+        keyword=audio_stream.read(porcupine.frame_length)
+        keyword=struct.unpack_from("h"*porcupine.frame_length,keyword)
+            
+        # processing keyword comes from mic 
+        keyword_index=porcupine.process(keyword)
 
-    # loop for streaming
-    while True or False:
-        audio_data = audio_stream.read(1024)
-        # Convert audio data to audio file for recognition
-        source = sr.AudioData(audio_data, 16000, 2)  # Create AudioData object
-        try:
-            # Recognize speech using Google Web Speech API
-            text = recognizer.recognize_google(source)
-            if "computer" in text or "alexa" in text:  # Check for keywords
-                print("hotword detected")
-                # pressing shortcut key win+j
-                import pyautogui as autogui  # type: ignore
+        # checking first keyword detetcted for not
+        if keyword_index>=0:
+            print("hotword detected")
 
-                autogui.keyDown("shift")
-                autogui.press("s")
-                time.sleep(2)
-                autogui.keyUp("shift")
-        except sr.UnknownValueError:
-            pass  # Ignore unrecognized speech
-        except sr.RequestError as e:
-            print(f"Could not request results from Google Speech Recognition service; {e}")
-        finally:
-            del source  # Clean up the AudioData object
-
-except Exception as e:
-    print(f"Error: {e}")  # Log the error
+        # pressing shortcut key shift+s
+        pyautogui.keyDown("shift")
+        pyautogui.press("s")
+        pyautogui.keyUp("shift")
+except:
+    if porcupine is not None:
+        porcupine.delete()
     if audio_stream is not None:
         audio_stream.close()
     if paud is not None:

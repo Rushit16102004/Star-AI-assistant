@@ -72,49 +72,43 @@ def openCommand(query):
         except:
             speak("some thing went wrong")
 
-
 def hotword():
-    porcupine = None
-    paud = None
-    audio_stream = None
-    recognizer = sr.Recognizer()  # Initialize the recognizer
-
+    porcupine=None
+    paud=None
+    audio_stream=None
     try:
-        paud = pyaudio.PyAudio()
-        audio_stream = paud.open(rate=16000, channels=1, format=pyaudio.paInt16, input=True,
-                                frames_per_buffer=1024)
-
+    
+        # pre trained keywords    
+        porcupine=pvporcupine.create(keywords=["star","alexa"]) 
+        paud=pyaudio.PyAudio()
+        audio_stream=paud.open(rate=porcupine.sample_rate,channels=1,format=pyaudio.paInt16,input=True,frames_per_buffer=porcupine.frame_length)
+        
         # loop for streaming
         while True:
-            audio_data = audio_stream.read(1024)
-            # Convert audio data to audio file for recognition
-            source = sr.AudioData(audio_data, 16000, 2)  # Create AudioData object
-            try:
-                # Recognize speech using Google Web Speech API
-                text = recognizer.recognize_google(source)
-                if "computer" in text or "alexa" in text or "star" in text:  # Check for keywords
-                    print("hotword detected")
-                    # pressing shortcut key shift+s
-                    import pyautogui as autogui  # type: ignore
+            keyword=audio_stream.read(porcupine.frame_length)
+            keyword=struct.unpack_from("h"*porcupine.frame_length,keyword)
 
-                    autogui.keyDown("shift")
-                    autogui.press("s")
-                    time.sleep(2)
-                    autogui.keyUp("shift")
-            except sr.UnknownValueError:
-                pass  # Ignore unrecognized speech
-            except sr.RequestError as e:
-                print(f"Could not request results from Google Speech Recognition service; {e}")
-            finally:
-                del source  # Clean up the AudioData object
+            # processing keyword comes from mic 
+            keyword_index=porcupine.process(keyword)
 
-    except Exception as e:
-        print(f"Error: {e}")  # Log the error
+            # checking first keyword detetcted for not
+            if keyword_index>=0:
+                print("hotword detected")
+
+                # pressing shorcut key win+j
+                import pyautogui as autogui
+                autogui.keyDown("win")
+                autogui.press("j")
+                time.sleep(2)
+                autogui.keyUp("win")
+                
+    except:
+        if porcupine is not None:
+            porcupine.delete()
         if audio_stream is not None:
             audio_stream.close()
         if paud is not None:
             paud.terminate()
-
 
 def PlayYoutube(query):
     search_term = extract_yt_term(query)
@@ -130,7 +124,7 @@ def findContact(query):
     try:
         query = query.strip().lower()
         cursor.execute("SELECT mobile_no FROM contacts WHERE LOWER(name) LIKE ? OR LOWER(name) LIKE ?",
-                       ('%' + query + '%', query + '%'))
+                    ('%' + query + '%', query + '%'))
         results = cursor.fetchall()
         print(results[0][0])
 
@@ -147,23 +141,29 @@ def findContact(query):
 def whatsApp(mobile_no, message, flag, name):
     if flag == 'message':
         target_tab = 12
-        star_message = "message send successfully to " + name
+        star_message = "message sent successfully to " + name
 
     elif flag == 'call':
-        target_tab = 7
-        message = ''
-        star_message = "calling to " + name
+        target_tab = 10
+        message = ''  # No message for calls
+        star_message = "calling " + name
+        # Construct the URL for voice call
+        whatsapp_url = f"whatsapp://call?phone={mobile_no}"
+
+    elif flag == 'video call':
+        target_tab = 9
+        message = ''  # No message for video calls
+        star_message = "starting video call with " + name
+        # Construct the URL for video call
+        whatsapp_url = f"whatsapp://call?phone={mobile_no}"
 
     else:
-        target_tab = 6
-        message = ''
-        star_message = "staring video call with " + name
+        # Handle unsupported flag
+        speak("Unsupported action")
+        return
 
-    # Encode the message for URL
-    encoded_message = quote(message)
-
-    # Construct the URL
-    whatsapp_url = f"whatsapp://send?phone={mobile_no}&text={encoded_message}"
+    # Encode the message for URL (only for messages)
+    encoded_message = quote(message) if flag == 'message' else ''
 
     # Construct the full command
     full_command = f'start "" "{whatsapp_url}"'
